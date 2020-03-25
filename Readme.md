@@ -39,6 +39,11 @@ report,model = ez.quick_ml(dataframe,'target_column','flag')
 ```
 ### quick_pred()
 quick_pred method takes cleaned data and prediction flag('r','c') and does prediction using several different algorithms and gives output score for each algorithm in tabular format.
+- regression
+<img src="https://github.com/Chintan99/eazeml/blob/master/mdimages/report-r.PNG" alt="drawing2" width="600" height='200' />
+
+- classification
+<img src="https://github.com/Chintan99/eazeml/blob/master/mdimages/report-c.PNG" alt="drawing1" width="600" height='200' />
 
 ```python
 X = features
@@ -197,8 +202,8 @@ ez.corr_heatmap(df,'basic')
 Method Plots Visualized Confusion Matrix.
 
 example:
-![binary](https://github.com/Chintan99/eazeml/blob/master/mdimages/cm2.PNG)
-![multiclass](https://github.com/Chintan99/eazeml/blob/master/mdimages/cm1.PNG)
+![binary](https://github.com/Chintan99/eazeml/blob/master/mdimages/cm2.PNG =100x20)
+![multiclass](https://github.com/Chintan99/eazeml/blob/master/mdimages/cm1.PNG =100x20)
 ```python
 #y_true- Actual Value
 #y_pred- Predicted Value
