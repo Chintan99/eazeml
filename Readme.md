@@ -223,8 +223,8 @@ ez.corr_heatmap(df,'basic')
 Method Plots Visualized Confusion Matrix.
 
 example:
-![binary](https://github.com/Chintan99/eazeml/blob/master/mdimages/cm2.PNG =100x20)
-![multiclass](https://github.com/Chintan99/eazeml/blob/master/mdimages/cm1.PNG =100x20)
+![binary](https://github.com/Chintan99/eazeml/blob/master/mdimages/cm2.PNG)
+![multiclass](https://github.com/Chintan99/eazeml/blob/master/mdimages/cm1.PNG)
 ```python
 #y_true- Actual Value
 #y_pred- Predicted Value
