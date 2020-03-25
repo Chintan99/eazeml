@@ -39,17 +39,22 @@ report,model = ez.quick_ml(dataframe,'target_column','flag')
 ```
 ### quick_pred()
 quick_pred method takes cleaned data and prediction flag('r','c') and does prediction using several different algorithms and gives output score for each algorithm in tabular format.
+#### example:
 - regression
 <img src="https://github.com/Chintan99/eazeml/blob/master/mdimages/report-r.PNG" alt="drawing2" width="600" height='200' />
 
 - classification
 <img src="https://github.com/Chintan99/eazeml/blob/master/mdimages/report-c.PNG" alt="drawing1" width="600" height='200' />
 
+##### code:
 ```python
 X = features
 y = target column
 ## flag('r','c')
 ez.quick_pred(X,y,'flag')
+or
+report = ez.quick_pred(X,y,'flag')
+## report stores table for future use
 ```
 ### kaggle()
 kaggle method takes input argument: traindataset, testdataset,target columname and flag('r','c') and gives out as complete summary of steps performed in prediction and data cleaning process and returns predicted values of test dataframe 
@@ -60,6 +65,15 @@ or
 test_pred,report = ez.kaggle(train,test,'targetcolumn','flag')
 ## test_pred- consist test file prediction
 ## report - tabular report score
+```
+### gen_txt_report()
+Method genrates txt file named  output.txt containig entire summary report of oprations performed
+##### usage:
+```python
+%%capture example
+quick_ml(df,'target','c')
+gen_report(example) ## this creates summary file named output.txt
+# file contains all log and output of cell
 ```
 ### clean_data()
 clean_data automatically cleans data by:
@@ -86,6 +100,12 @@ vec = ez.nlp_text(dataframe,'columname')
 ```
 
 ## Some example of Basic functions
+### importdata()
+Method capable of importing tsc,csv,excel file in pandas dataframe object
+```python
+vec = ez.importdata('filename.extension')
+## returns cleaned Tfidf vector
+```
 ### info() 
 info method gives complete information about the data in tabluar format including:
 1. Number of Rows,Column
@@ -93,6 +113,7 @@ info method gives complete information about the data in tabluar format includin
 3. null, unique values in each column
 4. total missing value and missing value percentage in each column.
 5. Plots graph of Missing data in percentage format.
+
 
 ```python
 ez.info(dataframe)
