@@ -4,7 +4,7 @@
 # ## eaze-ml   ¯\_(ツ)_/¯
 # #### Data Science FrameWork
 
-# In[149]:
+# In[25]:
 
 
 ## Basic Libraries
@@ -25,6 +25,7 @@ from plotly.offline import iplot# init_notebook_mode(connected=True)
 import plotly.offline as pyo
 pyo.init_notebook_mode()
 #### Ignore Warning Messages
+import os
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -68,7 +69,7 @@ from sklearn.feature_selection import RFE
 from sklearn.decomposition import PCA
 
 
-# In[216]:
+# In[6]:
 
 
 ### import data
@@ -771,7 +772,7 @@ This Method Provides Menu based Algorithm Selection (Regression) for Prediction,
 
 # ## Quick Machine learning
 
-# In[296]:
+# In[7]:
 
 
 ### please to input only cleaned dataframe
@@ -869,7 +870,7 @@ example:
     
 
 ### pass Dataframe,Target column-name & flag (r for regression and c for classification)
-def quick_ml(df1,target,flag,n=10):
+def quick_ml(df1,target,flag,n=0):
     '''
 quick_ml: No hazzle Machine learning.
     This methods Automatically takes dataframe and target column and flag as input and gives you the Preidiction using famous Machine learning Algorithm.
@@ -881,7 +882,8 @@ parameters:
  * 'flag': specify flag 'r'for regression and 'c'for classification
 optional:
   'n'= no of features you wan't to be used for prediction using RFE
-  (by default set to 10)
+      (by default set to 0 and predicts using all features )
+      (Rfe May Take Time in Execution so wait)
     
     '''
     info(df1)
@@ -901,11 +903,13 @@ optional:
         print('Detailed Executing with RandomForest ..')
         y_pred, model = randomforest_classifier(X_train,y_train,X_test,y_test)
         classification_result(y_test,y_pred)
-        #rfecols = rfe(model,X_train,y_train,n)
-        #X_train = X_train[rfecols]
-        #X_test = X_test[rfecols]
-        #print(' RFE Selected Features')
-        #y_pred, model = randomforest_classifier(X_train,y_train,X_test,y_test)
+        if n>0:
+            print('\n please wait while performing prediction using RFE...')
+            rfecols = rfe(model,X_train,y_train,n)
+            X_train = X_train[rfecols]
+            X_test = X_test[rfecols]
+            print('RFE Selected Features',rfecols)
+            y_pred, model = randomforest_classifier(X_train,y_train,X_test,y_test)
         X = scale(X)
         return quick_pred(X,y,'c'),model
     
@@ -914,11 +918,13 @@ optional:
         print('Detailed Executing with RandomForest ..')
         y_pred, model = randomforest_reg(X_train,y_train,X_test,y_test)
         regression_result(y_test,y_pred)
-        #rfecols = rfe(model,X_train,y_train,n)
-        #X_train = X_train[rfecols]
-        #X_test = X_test[rfecols]
-        #y_pred, model = randomforest_reg(X_train,y_train,X_test,y_test)
-        #print(' RFE Selected Features')
+        if n>0:
+            print('\n please wait while performing prediction using RFE...')
+            rfecols = rfe(model,X_train,y_train,n)
+            X_train = X_train[rfecols]
+            X_test = X_test[rfecols]
+            y_pred, model = randomforest_reg(X_train,y_train,X_test,y_test)
+            print(' RFE Selected Features')
         X = scale(X)
         return quick_pred(X,y,'r'),model
 
@@ -928,7 +934,7 @@ optional:
 # * corr_heatmap()
 # * box_hist_plot()
 
-# In[297]:
+# In[8]:
 
 
 def showbias(dataframe,target):
@@ -1034,7 +1040,7 @@ def wordcloud(df1,columname,bgcolor=None):
 
 # ### Kaggle 
 
-# In[298]:
+# In[9]:
 
 
 def kaggle(traindataset,testdataset,target,flag):
@@ -1050,7 +1056,7 @@ def kaggle(traindataset,testdataset,target,flag):
     '''
     print('\n\n******* Train Dataset Information *********\n')
     info(train)
-    print('\n******* Test Dataset Information *********\n')
+    print('\n\n********* Test Dataset Information ***********\n')
     info(test)
     target_var = train[target]
     train.drop(target,inplace=True,axis=1)
@@ -1111,14 +1117,14 @@ def kaggle_csv(column1,column2,filename,*argv):
     return subdf
 
 
-# In[299]:
+# In[10]:
 
 
 import eazeml
 import inspect
 
 
-# In[300]:
+# In[11]:
 
 
 def help(fn):
@@ -1132,7 +1138,7 @@ def list_func():
 
 # ### NLP processing 
 
-# In[301]:
+# In[12]:
 
 
 from textblob import TextBlob ### For Sentiment Polarity
@@ -1195,15 +1201,9 @@ def nlp_text(dataframe,columname):
     return data
 
 
-# In[302]:
-
-
-print('Eaze ML imported Successfully ¯\_(ツ)_/¯ \n ')
-
-
 # ### Deep Learning
 
-# In[303]:
+# In[14]:
 
 
 from sklearn.neural_network import MLPClassifier, MLPRegressor
@@ -1246,7 +1246,7 @@ def neural_network(X_train,y_train,X_test,y_test,flag,solver=None):
     return y_pred, mlp
 
 
-# In[ ]:
+# In[15]:
 
 
 def gen_txt_report(var):
@@ -1266,9 +1266,226 @@ def gen_txt_report(var):
         out.close()
 
 
-# ## ThankYou
+# ## Deployment
 
-# In[117]:
+# In[16]:
+
+
+import pickle
+
+
+# In[17]:
+
+
+app_py = ['import numpy as np\n',
+ 'from flask import Flask, request, jsonify, render_template\n',
+ 'import pickle\n',
+ '\n',
+ 'app = Flask(__name__)\n',
+ "model = pickle.load(open('model.pkl', 'rb'))\n",
+ '\n',
+ "@app.route('/')\n",
+ 'def home():\n',
+ "    return render_template('index.html')\n",
+ '\n',
+ "@app.route('/predict',methods=['POST'])\n",
+ 'def predict():\n',
+ "    '''\n",
+ '    For rendering results on HTML GUI\n',
+ "    '''\n",
+ '    int_features = [int(x) for x in request.form.values()]\n',
+ '    final_features = [np.array(int_features)]\n',
+ '    prediction = model.predict(final_features)\n',
+ '\n',
+ '    output = round(prediction[0], 2)\n',
+ '\n',
+ "    return render_template('index.html', prediction_text='Prediction:  {}'.format(output))\n",
+ '\n',
+ "@app.route('/predict_api',methods=['POST'])\n",
+ 'def predict_api():\n',
+ "    '''\n",
+ '    For direct API calls trought request\n',
+ "    '''\n",
+ '    data = request.get_json(force=True)\n',
+ '    prediction = model.predict([np.array(list(data.values()))])\n',
+ '\n',
+ '    output = prediction[0]\n',
+ '    return jsonify(output)\n',
+ '\n',
+ 'if __name__ == "__main__":\n',
+ '    app.run(debug=True)']
+
+
+# In[18]:
+
+
+def index_file(title):
+    htm = ['<!doctype html>\n',
+     '<html lang="en">\n',
+     '<head>\n',
+     '    <meta charset="UTF-8">\n',
+     '    <title>Ml Deploy</title>\n',
+     '    <style>\n',
+     '        body{\n',
+     '            margin: 0;\n',
+     '            padding: 0;\n',
+     '            }\n',
+     '        body:before{\n',
+     "            content: '';\n",
+     '            position: fixed;\n',
+     '            width: 100vw;\n',
+     '            height: 100vh;\n',
+     '            background: -webkit-linear-gradient(rgb(92, 57, 219),rgb(173, 218, 210),rgb(235, 193, 56)); \n',
+     '            background: -o-linear-gradient(rgb(92, 57, 219),rgb(173, 218, 210),rgb(235, 193, 56)); \n',
+     '            background: -moz-linear-gradient(rgb(92, 57, 219),rgb(173, 218, 210),rgb(235, 193, 56)); \n',
+     '            background: linear-gradient(rgb(92, 57, 219), rgb(173, 218, 210),rgb(235, 193, 56)); \n',
+     '            background-color:rgb(46, 236, 157); \n',
+     '            background-position: center center;\n',
+     '            background-repeat: no-repeat;\n',
+     '            background-attachment: fixed;\n',
+     '            background-size: relative;\n',
+     '            -webkit-filter: blur(10px);\n',
+     '            -moz-filter: blur(10px);\n',
+     '            -o-filter: blur(10px);\n',
+     '            -ms-filter: blur(10px);\n',
+     '            filter: blur(10px);\n',
+     '        }\n',
+     '        .form\n',
+     '        {\n',
+     '            position: absolute;\n',
+     '            top:5%;\n',
+     '            left:30%;\n',
+     '            margin-bottom: 20px;\n',
+     '            align-self :center;\n',
+     '            /*transform: translate(-50%,-50%);*/\n',
+     '            width: 400px;\n',
+     '            height: relative;\n',
+     '            padding: 50px 40px;\n',
+     '            box-sizing: border-box;\n',
+     '            background: rgba(0,0,0,.55);\n',
+     '        \n',
+     '        }\n',
+     '        .form h2 {\n',
+     '            margin: 0;\n',
+     '            padding: 0 0 20px;\n',
+     '            color:white;\n',
+     "            font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n",
+     '            text-align: center;\n',
+     '            text-transform: uppercase;\n',
+     '        }\n',
+     '        .form p\n',
+     '        {\n',
+     '            margin: 0;\n',
+     '            padding: 0;\n',
+     '            font-weight: bold;\n',
+     '            color: #fff;\n',
+     '        }\n',
+     '        .form input\n',
+     '        {\n',
+     '            width: 100%;\n',
+     '            margin-bottom: 20px;\n',
+     '        }\n',
+     '        .form input[type="text"]\n',
+     '        {\n',
+     '            border: none;\n',
+     '            border-bottom: 1px solid #fff;\n',
+     '            background: transparent;\n',
+     '            outline: none;\n',
+     '            height: 40px;\n',
+     '            color: #fff;\n',
+     '            font-size: 16px;\n',
+     '        }\n',
+     '        .form input[type="submit"] {\n',
+     '            height: 40px;\n',
+     '            color: whitesmoke;\n',
+     '            font-weight: bold;\n',
+     '            font-size: 15px;\n',
+     '            background: rgb(28, 235, 131);\n',
+     '            cursor: pointer;\n',
+     '            border-radius: 25px;\n',
+     '            border: none;\n',
+     '            outline: none;\n',
+     '            margin-top: 5%;\n',
+     '        }\n',
+     '        .form a\n',
+     '        {\n',
+     '            color: #fff;\n',
+     '            font-size: 14px;\n',
+     '            font-weight: bold;\n',
+     '            text-decoration: none;\n',
+     '        }\n',
+     '        input[type="checkbox"] {\n',
+     '            width: 20%;\n',
+     '        }\n',
+     '        h2{\n',
+     '            color:white;\n',
+     '            font-family: sans-serif;\n',
+     '        }\n',
+     '    </style>\n',
+     '</head>\n',
+     '<body>\n',
+     '    <div class="form">\n',
+     '        <h2>'+title+'</h2>\n',
+     '        <form action="{{ url_for(\'predict\')}}" method="post">\n',
+     '            \n',
+     '            <input type="submit" name="" value="Predict">\n',
+     '        </form>\n',
+     '        <form>\n',
+     '            <p>{{ prediction_text }}</p>\n',
+     '        </form>\n',
+     '    </div>\n',
+     '</body>\n',
+     '</html>']
+    return htm
+
+
+# In[19]:
+
+
+def deploy_one(model,X,title=None):
+    '''
+    Deploy one Method, Deploys Machine Learning Models to Web App using Flask
+    All files will be stored in deployment-files folder created automatically in notebook running directory
+    usage:
+        deploy_form(model,X,'title')
+    model -> Machine Learning Model
+    X     -> Features (Note Features should be iterable)
+                eg - list,dataframe of Features(X_train)
+  'title' -> Title For Html Deplyment UI (optional)
+              Default is 'Make Predictions'
+    '''
+    try:
+        if title != None:
+            htm_template = index_file(title)
+        else:
+            htm_template = index_file('Make Predictions')
+        
+        os.mkdir('deployment-files')
+        os.mkdir('deployment-files/templates')
+        pickle.dump(model, open('deployment-files/model.pkl','wb'))
+        with open('deployment-files/app.py','w') as mf:
+            for k in app_py:
+                mf.write(k)
+            mf.close()
+        with open("deployment-files/templates/index.html", "w") as f1:
+            for i in htm_template:
+                f1.write(i)
+                for k in i.split(' '):
+                    if k == '<form':
+                        for i in X:
+                            htmline = '<input type="text" name="'+str(i)+'" placeholder="'+str(i)+'" required="required" autocomplete="off" />' 
+                            f1.write(str(htmline)+'\n')
+            f1.close()
+        print('All Deployment Files Created Successfully\n')
+        print('Files Created and stored in : /deployment-files named Folder\n')
+        print('Open deployment-files folder and open command prompt and run "python app.py" copy link and paste in browser to run app, enjoy.')
+        print('\nFiles created:\n 1. model.pkl - Model file using pickle\n 2.app.py - Flask server file\n3.index.html - User Interface file.')
+    except:
+        print('There was an error Generating Deployment Files')
+        print('Note:\n Delete "Deployment-files" folder if already exists.')
+
+
+# In[20]:
 
 
 ### just in case no plots displayed
