@@ -36,6 +36,9 @@ and thats it, function will automatically clean, process data and give you outpu
 ez.quick_ml(dataframe,'target_column','flag')
 or
 report,model = ez.quick_ml(dataframe,'target_column','flag')
+or
+report,model = ez.quick_ml(dataframe,'target_column','flag',3)
+# performs RFE and selects only 'n' number of column for prediction
 ```
 ### quick_pred()
 quick_pred method takes cleaned data and prediction flag('r','c') and does prediction using several different algorithms and gives output score for each algorithm in tabular format.
@@ -56,6 +59,19 @@ or
 report = ez.quick_pred(X,y,'flag')
 ## report stores table for future use
 ```
+### deploy_one()
+Method Deploys Machine Learning Model to Production ready in one Line of code.
+Method Creates Fask App for Deployment.
+- User just need to pass
+    - Model - Machine Learning Model
+    - Features - Features used for Predictions
+    - 'title' (optional) - Title to set on Web App. By default it's "Make Predictions".
+- And Done, Your Deployment ready files you be stored in created folder baned 'deployment-files'.
+```python
+ez.deploy_one(model,features,'titlle')
+```
+
+
 ### kaggle()
 kaggle method takes input argument: traindataset, testdataset,target columname and flag('r','c') and gives out as complete summary of steps performed in prediction and data cleaning process and returns predicted values of test dataframe 
 
