@@ -49,5 +49,6 @@ setuptools.setup(
         'textblob',
         'nltk',
         'tqdm',
+        'flask',
     ],
 )
