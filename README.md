@@ -1,9 +1,10 @@
 [![GitHub license](https://img.shields.io/github/license/Chintan99/eazeml?label=EazeML)](https://github.com/Chintan99/eazeml/blob/master/LICENSE.txt)
-# Eazeml ¯\\\_(ツ)_/¯
+
+# Eazeml ;}
 
 eazeml is a Python 3.x based Machine Learning Open Source Library which makes the process of machine learning and Data science Faster, Easy and reduces the difficulty of manual coding.
 
-## Installation
+## Installation:
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install eazeml.
 
@@ -15,8 +16,6 @@ pip install eazeml
 
 ```python
 import eazeml as ez
-
-ez.list_func() ## lists all the available Functions
 help(eazml) ## Prints all function and usage
 ```
 
@@ -50,10 +49,10 @@ report,model = ez.quick_ml(dataframe,'target_column','flag',n)
 quick_pred method takes cleaned data and prediction flag('r','c') and does prediction using several different algorithms and gives output score using several metrics for each algorithm in tabular format.
 #### example:
 - regression
-<img src="https://github.com/Chintan99/eazeml/blob/master/mdimages/report-r.PNG" alt="drawing2" width="600" height='200' />
+<img src="https://drive.google.com/file/d/1FGPyEJFSAZYU9KZjjqVgkq1iyonLOGdC/view?usp=sharing" alt="drawing2" width="600" height='200' />
 
 - classification
-<img src="https://github.com/Chintan99/eazeml/blob/master/mdimages/report-c.PNG" alt="drawing1" width="600" height='200' />
+<img src="https://drive.google.com/file/d/1ed_Cb6mKukuzHd7KgeEqrYGIDlmZExzT/view?usp=sharing" alt="drawing1" width="600" height='200' />
 
 ##### code:
 ```python
