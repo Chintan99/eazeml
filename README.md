@@ -233,7 +233,7 @@ ez.confusion_mat(y_true,y_pred)
 ```
 ### roc_curve_graph
 Method Plots AUC-ROC plot for y_true,y_pred
-![auc plot](https://github.com/Chintan99/eazeml/blob/master/mdimages/auc.PNG)
+![auc plot](https://raw.githubusercontent.com/Chintan99/eazeml/master/mdimages/auc.PNG)
 - only works with Binary Classification
 ```python
 ez.roc_curve_graph(y_true,y_pred)
