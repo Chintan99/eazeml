@@ -27,21 +27,27 @@ help(eazml) ## Prints all function and usage
 ### quick_ml() 
 quick_ml method provides automation to data cleaningn & machine learning process here we just need to provide
 1. Pandas Dataframe containg data.
-2. Target-columnname we want to make a prediction of.
+2. Target-column name we want to make a prediction for.
 3. flag: which specify prediction type (like 'r' for regression and 'c' for classification).
+4. n: n specifies no of features you wan't to use for prediction. it use RFE (Reccurssive Feature Elimination) for extacting best 'n' specified column and make prediction using them.
+- By default 'n' is set to 0 and will use all quick_ml will use all features for prediction if 'n' not specified
 
-and thats it, function will automatically clean, process data and give you output as a complete summary of processing done and returns report table and model used for prediction
+and thats it, function will automatically clean & process data and give you output as a complete summary of processing done, Features used and returns report table and model used for prediction
 
 ```python
 ez.quick_ml(dataframe,'target_column','flag')
+```
 or
+```python
 report,model = ez.quick_ml(dataframe,'target_column','flag')
+```
 or
-report,model = ez.quick_ml(dataframe,'target_column','flag',3)
-# performs RFE and selects only 'n' number of column for prediction
+```python
+report,model = ez.quick_ml(dataframe,'target_column','flag',n)
+# performs RFE and selects only 'n' number of column for prediction.
 ```
 ### quick_pred()
-quick_pred method takes cleaned data and prediction flag('r','c') and does prediction using several different algorithms and gives output score for each algorithm in tabular format.
+quick_pred method takes cleaned data and prediction flag('r','c') and does prediction using several different algorithms and gives output score using several metrics for each algorithm in tabular format.
 #### example:
 - regression
 <img src="https://github.com/Chintan99/eazeml/blob/master/mdimages/report-r.PNG" alt="drawing2" width="600" height='200' />
@@ -55,29 +61,36 @@ X = features
 y = target column
 ## flag('r','c')
 ez.quick_pred(X,y,'flag')
+```
 or
+```python
 report = ez.quick_pred(X,y,'flag')
 ## report stores table for future use
 ```
 ### deploy_one()
-Method Deploys Machine Learning Model to Production ready in one Line of code.
-Method Creates Fask App for Deployment.
+Method Deploys, Machine Learning Model to Production. In one line of code.
+
+Method Creates Fask App which is ready to be deployed to production..
 - User just need to pass
     - Model - Machine Learning Model
     - Features - Features used for Predictions
     - 'title' (optional) - Title to set on Web App. By default it's "Make Predictions".
-- And Done, Your Deployment ready files you be stored in created folder baned 'deployment-files'.
+- And Done, Your Deployment ready files will be stored in created folder naned 'deployment-files'.
 ```python
 ez.deploy_one(model,features,'titlle')
 ```
 
 
 ### kaggle()
-kaggle method takes input argument: traindataset, testdataset,target columname and flag('r','c') and gives out as complete summary of steps performed in prediction and data cleaning process and returns predicted values of test dataframe 
+Method makes participating in kaggle compitions easy.
+
+kaggle method takes input arguments: traindataset, testdataset,target columname and flag('r','c') and gives output as complete summary of steps performed in prediction and data cleaning process and returns predicted values of test dataframe which can be submitted on kaggle.
 
 ```python
 ez.kaggle(train,test,'targetcolumn','flag')
+```
 or
+```python
 test_pred,report = ez.kaggle(train,test,'targetcolumn','flag')
 ## test_pred- consist test file prediction
 ## report - tabular report score
@@ -86,7 +99,7 @@ test_pred,report = ez.kaggle(train,test,'targetcolumn','flag')
 Method genrates txt file named  output.txt containig entire summary report of oprations performed
 ##### usage:
 ```python
-%%capture example
+%%capture example ## captures output of ell and store in example
 quick_ml(df,'target','c')
 gen_report(example) ## this creates summary file named output.txt
 # file contains all log and output of cell
@@ -119,7 +132,7 @@ vec = ez.nlp_text(dataframe,'columname')
 ### importdata()
 Method capable of importing tsc,csv,excel file in pandas dataframe object
 ```python
-vec = ez.importdata('filename.extension')
+dataframe = ez.importdata('filename.extension')
 ## returns cleaned Tfidf vector
 ```
 ### info() 
@@ -135,25 +148,27 @@ info method gives complete information about the data in tabluar format includin
 ez.info(dataframe)
 ```
 ### getcolumnstype()
-getcolumnstype returns the type of columns and store it in list so reserchers not have to waste time in writing code and manully determining columns type.
+getcolumnstype returns the type of columns and store it in list format. Saves wasting time in manully writing code and determining columns type.
 ```python
 num,cat = getcolumnstype(dataframe)
 ## num - list of numeric columns
 ## cat - list of categorical columns
 ```
 ### drop_columns() & dropcolumns()
-drop_columns takes argument as Percentage in no and columns name 
-1. no - number of null value percentage, above which all columns will be dropped and 
+drop_columns takes argument as Percentage in NUm (int) and columns name 
+1. Num - number of null value percentage, above which all columns will be dropped
 2. (optional) columns name - specify columns sepreated with ',' will be dropped
+#### usage:
 ```python
-dataframe = ez.drop_columns(dataframe,20,'columnnames')
+dataframe = ez.drop_columns(dataframe,n,'columnnames'..)
 ``` 
-- This Example will drop all columns having null value percentage above 20 and drop columns specifiied if don't wan't to use n feature just mention 0 in place of n
+##### example:
+- This Example will drop all columns having null value percentage above 20 and drop columns id & name from dataframe.
 ```python
 df = ez.drop_columns(df,n,'id','name')
 ```
 #### dropcolumns():
-it just drop specified columns. example:
+Method just drops specified columns. example:
 ```python
 df = ez.drop_columns(df,'id','name','tp','dsd')
 ```
@@ -180,42 +195,12 @@ df = fillnulls(df,'unknown','col1','col2',...)
 # unknown will be filled inplace of null values in col2, col1
 ```
 ### extract_number()
-Method Extract number from column removing any extra string,special char,symbol etc and return cleaned column
+Method Extracts number from column removing any extra string,special char,symbol,  etc and returns cleaned column
 ```python
 df = ez.extract_number(df,'income')
-# removes $symbol and return cleaned column dataframe
+# removes $ symbol and return cleaned column in dataframe
 ```
-### get_IQR
-Prints IQR (Inter Qurantile Range) values table for each column of dataframe 
-```python
-df = ez.get_IQR(dataframe)
-```
-### show_outlier & remove_outlier
-- show_outlier()
 
-Method Prints number of outlier in each column of dataframe
-```python
-ez.show_outlier(dataframe)
-```
-- remove_outlier()
-
-Method removes all outliers from dataframe and returns Normally Distributed Dataframe and prints IQR range table.
-```python
-newdf = ez.remove_outlier(dataframe)
-# stores outlier free dataframe in newdf
-```
-### stat_models()
-Prints Statastical Significance table(OLS table) for each column of dataframe with respect to target column 
-```python
-X = features
-y = target column
-ez.stats_models(y,X)
-```
-### VIF()
-Method Prints VIF(Variation Inflation Variance)value of each column in Table format for each column of dataframe
-```python
-ez.VIF(dataframe)
-```
 ### corr_heatmap()
 Plots Corelation Heatmap of given dataframe.
 
@@ -346,6 +331,37 @@ ez.Gradient_boost_classifier(X_train,y_train,X_test,y_test)
 ez.Gradient_boost_reg(X_train,y_train,X_test,y_test)
 ez.adaboost_classifier(X_train,y_train,X_test,y_test)
 ez.adaboost_reg(X_train,y_train,X_test,y_test)
+```
+### get_IQR
+Prints IQR (Inter Quartile Range) values table for each column of dataframe 
+```python
+ez.get_IQR(dataframe)
+```
+### show_outlier & remove_outlier
+- show_outlier()
+
+Method Prints number of outlier in each column of dataframe
+```python
+ez.show_outlier(dataframe)
+```
+- remove_outlier()
+
+Method removes all outliers from dataframe and returns Normally Distributed Dataframe and prints IQR range table.
+```python
+newdf = ez.remove_outlier(dataframe)
+# stores outlier free dataframe in newdf
+```
+### stat_models()
+Prints Statastical Significance table(OLS table) for each column of dataframe with respect to target column 
+```python
+X = features
+y = target column
+ez.stats_models(y,X)
+```
+### VIF()
+Method Prints VIF(Variation Inflation Variance)value of each column in Table format for each column of dataframe
+```python
+ez.VIF(dataframe)
 ```
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
