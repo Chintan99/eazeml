@@ -1,7 +1,10 @@
-[![GitHub license](https://img.shields.io/github/license/Chintan99/eazeml?label=EazeML)](https://github.com/Chintan99/eazeml/blob/master/LICENSE.txt)
-# Eazeml ¯\\\_(ツ)_/¯
+![GitHub license](https://img.shields.io/github/license/Chintan99/eazeml?label=EazeML)
+# Eazeml ;) 
 
-eazeml is a Python 3.x based Machine Learning Open Source Library which makes the process of machine learning and Data science Faster, Easy and reduces the difficulty of manual coding.
+<img src="https://raw.githubusercontent.com/Chintan99/eazeml/master/mdimages/original.jpg" alt="drawing1" width="600" height='300' />
+
+
+<b>eazeml</b> is a Python 3.x based Machine Learning Open Source Library which makes the process of machine learning and Data science Faster, Easy and reduces the difficulty of manual coding.
 
 ## Installation
 
@@ -15,7 +18,7 @@ pip install eazeml
 
 ```python
 import eazeml as ez
-help(eazml) ## Prints all function and usage
+help(ez) ## Prints all function and usage
 ```
 
 ## Note: 
@@ -32,6 +35,8 @@ quick_ml method provides automation to data cleaningn & machine learning process
 
 and thats it, function will automatically clean & process data and give you output as a complete summary of processing done, Features used and returns report table and model used for prediction
 
+#### usage:
+
 ```python
 ez.quick_ml(dataframe,'target_column','flag')
 ```
@@ -41,6 +46,12 @@ report,model = ez.quick_ml(dataframe,'target_column','flag')
 ```
 or
 ```python
+report,model = ez.quick_ml(dataframe,'target_column','flag',n)
+# performs RFE and selects only 'n' number of column for prediction.
+```
+for Google Cobal & Kaggle:
+```python
+ez.plotly_brower() #enables plotly in colab & kaggle.
 report,model = ez.quick_ml(dataframe,'target_column','flag',n)
 # performs RFE and selects only 'n' number of column for prediction.
 ```
@@ -221,8 +232,12 @@ ez.corr_heatmap(df,'basic')
 ### confusion_mat()
 Method Plots Visualized Confusion Matrix.
 
-example:
+#### examples:
+
+
 ![binary](https://raw.githubusercontent.com/Chintan99/eazeml/master/mdimages/cm2.PNG)
+
+
 ![multiclass](https://raw.githubusercontent.com/Chintan99/eazeml/master/mdimages/cm1.PNG)
 ```python
 #y_true- Actual Value
@@ -232,6 +247,7 @@ ez.confusion_mat(y_true,y_pred)
 ```
 ### roc_curve_graph
 Method Plots AUC-ROC plot for y_true,y_pred
+
 ![auc plot](https://raw.githubusercontent.com/Chintan99/eazeml/master/mdimages/auc.PNG)
 - only works with Binary Classification
 ```python
