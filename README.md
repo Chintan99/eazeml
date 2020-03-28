@@ -1,4 +1,5 @@
 ![GitHub license](https://img.shields.io/github/license/Chintan99/eazeml?label=EazeML)
+![ML](https://img.shields.io/pypi/l/eazeml)
 # Eazeml ;) 
 
 <img src="https://raw.githubusercontent.com/Chintan99/eazeml/master/mdimages/original.jpg" alt="drawing1" width="600" height='300' />
