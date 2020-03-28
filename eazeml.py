@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# ## eaze-ml   ¯\_(ツ)_/¯
+# ## eaze-ml   ¯\\_(ツ)_/¯
 # #### Data Science FrameWork
 
-# In[25]:
+# In[11]:
 
 
 ## Basic Libraries
@@ -69,7 +69,7 @@ from sklearn.feature_selection import RFE
 from sklearn.decomposition import PCA
 
 
-# In[6]:
+# In[10]:
 
 
 ### import data
@@ -769,11 +769,7 @@ This Method Provides Menu based Algorithm Selection (Regression) for Prediction,
     print('\nModel used:',model,'\n Done.')
     return y_pred,model
 
-
-# ## Quick Machine learning
-
-# In[7]:
-
+## Quick Machine learning
 
 ### please to input only cleaned dataframe
 ### specify "r" for regression and 'c' for classification
@@ -910,6 +906,7 @@ optional:
             X_test = X_test[rfecols]
             print('RFE Selected Features',rfecols)
             y_pred, model = randomforest_classifier(X_train,y_train,X_test,y_test)
+        print('Features used for prediction\n',X_train.columns)
         X = scale(X)
         return quick_pred(X,y,'c'),model
     
@@ -924,18 +921,12 @@ optional:
             X_train = X_train[rfecols]
             X_test = X_test[rfecols]
             y_pred, model = randomforest_reg(X_train,y_train,X_test,y_test)
-            print(' RFE Selected Features')
+            print(' RFE Selected Features',rfecols)
+        print('Features used for prediction:\n',X_train.columns)
         X = scale(X)
         return quick_pred(X,y,'r'),model
 
-
-# ## Visualization framework
-# * showbias()
-# * corr_heatmap()
-# * box_hist_plot()
-
-# In[8]:
-
+### Visualization
 
 def showbias(dataframe,target):
     '''
@@ -1037,118 +1028,128 @@ def wordcloud(df1,columname,bgcolor=None):
     plt.axis('off')
     plt.show()
 
+### Visualization
 
-# ### Kaggle 
-
-# In[9]:
-
-
-def kaggle(traindataset,testdataset,target,flag):
-    train = traindataset.copy()
-    test = testdataset.copy()
+def showbias(dataframe,target):
     '''
-    Kaggle Methods Makes Particiapting in Kaggle Compitions easy
-        - train = traindataframe
-        - test = testdataframe
-        - target = 'target column name'
-        - flag = 'Specify operation type 
-                ('r' for regression & 'c' for classification)
+    Plots interactive Pie Graph for Column and show percentage of each class in column
+    example usage:-
+      showbias(dataframe,'columname')
     '''
-    print('\n\n******* Train Dataset Information *********\n')
-    info(train)
-    print('\n\n********* Test Dataset Information ***********\n')
-    info(test)
-    target_var = train[target]
-    train.drop(target,inplace=True,axis=1)
-    if train.isnull().sum().sum() > 0:
-        train = clean_data(train)
+    data = dataframe.copy()
+    labels = list(data[target].value_counts().index)
+    fig = px.pie(names = labels,values = data[target].value_counts().values,title='Percentage data of '+target)
+    fig.update_traces(hole=.4, hoverinfo="label+percent+name")
+    fig.show()
+
+def corr_heatmap(dataframe,style=None):
+    ''' 
+    Plot interactive corealtion heatmap for dataframe passed.
+    example usage:- 
+      corr_heatmap(dataframe,style)
+      optional style:
+        1. 'basic' - return basic tabular highlighted corelation table 
+        2. interactive - plots interactive(zoomable) heatmap with plotly 
     
-    temp = list(train.columns)
-    test = test[temp]
-    if test.isnull().sum().sum() > 0:
-        nullcolumns = []
-        for i,j in dict(train.isnull().sum()).items():
-            if j > 0:
-                nullcolumns.append(i)
-        test = fillnulls(test,'median',nullcolumns)
-    
-    newdf = train.append(test)
-    num,cat = getcolumnstype(newdf)
-    if len(cat) > 0:
-        newdf = label_encode(newdf)
-    train = newdf[:train.shape[0]]
-    test = newdf.tail(test.shape[0])
-    train[target] = target_var
-    corr_heatmap(train,'interactive')
-    X = train.drop(target,axis=1)
-    y = train[target]
-    X_train,X_test,y_train,y_test = train_test_split(X,y,train_size=.7,random_state=42)
-    if flag == 'c':
-        showbias(train,target)
-        y_pred,model = classification(X,y)
-        report = quick_pred(X,y,'c')
-        print(report)
-    if flag == 'r':
-        box_hist_plot(train,target)
-        y_pred,model = regression(X,y)
-        report = quick_pred(X,y,'r')
-        print(report)
-    
-    test_pred = model.predict(test)
-    return test_pred,report
-
-def kaggle_csv(column1,column2,filename,*argv):
+    if columns names are not passed it will plot histrogram and boxplot for all numeric columns
     '''
-    Method inputs column1,column2 and filename and makes csv of that filename.
-    you can specify columnname after filename else default name would be id and target.
-    '''
-    if len(argv) > 1:
-        index = argv[0]
-        target = argv[1]
+    if style == 'basic':
+        return dataframe.corr().style.background_gradient()
+    elif style =='interactive':
+        corrs = dataframe.corr()
+        figure = ff.create_annotated_heatmap(
+            z=corrs.values,
+            x=list(corrs.columns),
+            y=list(corrs.index),
+            annotation_text=corrs.round(2).values,
+            showscale=True)
+        figure.show()
     else:
-        index = 'id'
-        target = 'target'
-    subdf = pd.DataFrame()
-    subdf[index] = column1
-    subdf[target] = column2
-    nfn = filename+".csv"
-    subdf.to_csv(nfn, index=False)
-    print('CSV created Successfully named: ',nfn)
-    return subdf
+        plt.figure(figsize=(20,20))
+        sns.heatmap(dataframe.corr(),square=True,annot=True,linewidths=0.2,cmap='Greens')
 
+def box_hist_plot(dataframe,*argv):
+    ''' 
+    Plot interactive Boxplot & Histogram for n no of column passed after dataframe name.
+    example usage:- 
+        box_hist_plot(dataframe,'columname1','columname2')
+    
+    if columns names are not passed it will plot histrogram and boxplot for all numeric columns
+    '''
+    columns = list(argv)
+    if len(columns) > 0:
+        for i in columns:
+            dataframe[i].iplot(kind='hist', title= i+' Distribution')
+            dataframe[i].iplot(kind='box', title= i+' Box plot')
+    else:
+        for i in dataframe._get_numeric_data().columns:
+            dataframe[i].iplot(kind='hist', title= i+' Distribution')
+            dataframe[i].iplot(kind='box', title= i+' Box plot')
+            
+def confusion_mat(y_test,y_pred,cmap=None):
+    '''
+    plots confusion matrix
+    '''
+    if cmap != None:
+        clr = cmap
+    else:
+        clr = 'gnuplot2_r'
+    y_pred_temp = pd.Series(y_pred)
+    labels = unique_labels(y_test,y_pred)
+    sns.heatmap(confusion_matrix(y_test,y_pred),annot=True,
+                fmt='d',cmap=clr,
+                cbar=False,
+                xticklabels = labels,
+                yticklabels = labels,
+                linewidth=0.2,
+                linecolor='black'
+               )
+    plt.ylabel('Actual',size=15)
+    plt.xlabel('Predicted',size=15)
+    plt.title('Confusion Matrix',size=20)
+    plt.show()
 
-# In[10]:
+from wordcloud import WordCloud 
+def wordcloud(df1,columname,bgcolor=None):
+    '''
+    df : dataframe
+    columname : columne for which word cloud needed
+    bgcolor : black or white background
+    '''
+    if bgcolor != None:
+        bgcolor = bgcolor
+    from wordcloud import WordCloud 
+    x2011 = df1[columname]
+    plt.subplots(figsize=(8,8))
+    wordcloud = WordCloud(
+                              background_color=bgcolor,
+                              width=512,
+                              height=384
+                             ).generate(" ".join(x2011))
+    plt.imshow(wordcloud)
+    plt.axis('off')
+    plt.show()
 
-
-import eazeml
-import inspect
-
-
-# In[11]:
-
-
-def help(fn):
-    print(fn.__doc__)
-def list_func():
-    method_list = [ func[0] for func in inspect.getmembers(eazeml, predicate=inspect.isroutine) if callable(getattr(eazeml, func[0]))]
-    print('List of Available Methods :\n',)
-    for i in method_list:
-        print(i)
-
-
-# ### NLP processing 
-
-# In[12]:
-
+### NLP processing 
 
 from textblob import TextBlob ### For Sentiment Polarity
-from nltk.corpus import stopwords
-stop_words = set(stopwords.words('english'))
+stop_words = ['has', 'no', 'doing', "weren't", 'have', 'while', 'an', 'some', 'above', 'than', "mightn't", 'all',
+              'theirs', 'am', 'are', 'won', 'does', 'until', 'again', "wasn't", 'will', 'was', 'not', 'into', 'so', 
+              'that', 'my', 'before', 'itself', 'whom', 'for', 'we', 'do', 'just', "doesn't", 'were', 'during', 'them', 
+              'be', 'from', 'there', 'after', 'any', 'did', 'once', "needn't", 'needn', 't', "wouldn't", 'your', 'in', 'they', 'his', 'had', 
+              'wasn', 'hers', 'd', 'why', 'being', 'yourselves', 'i', 'few', 'our', 'me', 'himself', 'shan', 'which', "hasn't", 'by', 
+              'at', 'wouldn', "that'll", "shan't", 'm', "you've", 'if', 'ain', 'further', 'hasn', 're', 'its', 'herself', 'haven', 'here',
+              'themselves', 'yourself', 'didn', 'been', 'where', 'each', 'because', 'hadn', 'on', "couldn't", 'mightn', 'having', 'isn', 'don', 'their',
+              'he', "hadn't", 'more', 'such', "shouldn't", 'she', 'can', 'as', "won't", 'who', 'now', "you'll", 'between', 'other', 'very', 'ours', 'and', 'her', 'it', 'weren', 
+              'most', "aren't", "didn't", "isn't", 'when', 'shouldn', 'you', 'under', 'below', 'how', 'is', 
+              "should've", 'through', 've', 'doesn', 'same', 'should', "it's", "she's", "don't", 'couldn', 'or', 'to', 'those', 'this', 'with', 'both', 'too', 'of', 'him', "mustn't", 'what', 
+              'nor', 'own', 'o', 's', 'up', 'myself', 'll', 'about', 'y', 'yours', 'the', 'aren', 'a', 'over', 
+              'against', "you're", 'ourselves', 'then', 'down', 'mustn', 'off', 'only', 'ma', "you'd", 'but', 'these', 'out', "haven't"]
 import string
 import nltk
 from nltk.stem import PorterStemmer,WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
-from tqdm.notebook import tqdm
+from tqdm.notebook import tqdm as tqdm
 
 def text_process(mess):
     '''
@@ -1200,11 +1201,45 @@ def nlp_text(dataframe,columname):
     print('\nshape before Text Processing:',data.shape)
     return data
 
-
-# ### Deep Learning
-
-# In[14]:
-
+### Deep Learning
+from sklearn.neural_network import MLPClassifier, MLPRegressor
+def neural_network(X_train,y_train,X_test,y_test,flag,solver=None):
+    '''
+    example usage:
+        y_pred,model = neural_network(X_train,y_train,X_test,y_test,flag)
+        flag: 'r' for regresssion ,'c' for classification 
+        optional solver: 'adam','lbfgs','sgd'
+        
+    Neural Netowrks needs to be hardcoded for every dataset
+    try optimizing them:
+        solver = 'adam','lbfgs','sgd'
+        hidden_layer_sizes=(100, 100),
+        solver='adam',tol=1e-2, 
+        max_iter=500, random_state=1
+    '''
+    print('Please wait, Building Neural Netowrk....')
+    if solver != None:
+        bp = solver
+    else:
+        bp = 'lbfgs'
+    
+    if flag == 'c':
+        mlp = make_pipeline(StandardScaler(),
+                            MLPClassifier(solver = bp))
+        mlp.fit(X_train, y_train)
+        y_pred = mlp.predict(X_test)
+        classification_result(y_test,y_pred)
+    elif flag =='r':
+        #hidden_layer_sizes=(100, 100),solver='adam',tol=1e-2, max_iter=500, random_state=1
+        mlp = make_pipeline(StandardScaler(),
+                            MLPRegressor(solver = bp))
+        mlp.fit(X_train, y_train)
+        y_pred = mlp.predict(X_test)
+        regression_result(y_test,y_pred)
+    else:
+        print('Please Specify Flag (r) or (c)')
+    
+    return y_pred, mlp
 
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 def neural_network(X_train,y_train,X_test,y_test,flag,solver=None):
@@ -1246,36 +1281,12 @@ def neural_network(X_train,y_train,X_test,y_test,flag,solver=None):
     return y_pred, mlp
 
 
-# In[15]:
+# In[14]:
 
 
-def gen_txt_report(var):
-    '''
-    usage:
-    1. write '%%captuer example' at top of cell you want to make report of
-    2. use gen_report(example)
-    example:
-        %%capture example
-        quick_ml(df,'target','c')
-        gen_report(example) ## this creates summary file named output.txt
-    '''
-    with open('output.txt', 'w') as out:
-        out.write(str('######## Quick Machine Learning ########\n'))
-        out.write(str('----------- Summray Report ------------\n'))
-        out.write(var.stdout)
-        out.close()
+### Deployment
 
-
-# ## Deployment
-
-# In[16]:
-
-
-import pickle
-
-
-# In[17]:
-
+import pickle as pickle
 
 app_py = ['import numpy as np\n',
  'from flask import Flask, request, jsonify, render_template\n',
@@ -1316,9 +1327,7 @@ app_py = ['import numpy as np\n',
  '    app.run(debug=True)']
 
 
-# In[18]:
-
-
+### Makes Html file for deployment
 def index_file(title):
     htm = ['<!doctype html>\n',
      '<html lang="en">\n',
@@ -1438,10 +1447,6 @@ def index_file(title):
      '</html>']
     return htm
 
-
-# In[19]:
-
-
 def deploy_one(model,X,title=None):
     '''
     Deploy one Method, Deploys Machine Learning Models to Web App using Flask
@@ -1484,9 +1489,19 @@ def deploy_one(model,X,title=None):
         print('There was an error Generating Deployment Files')
         print('Note:\n Delete "Deployment-files" folder if already exists.')
 
-
-# In[20]:
-
+def plotly_browser():
+    import IPython
+    display(IPython.core.display.HTML('''
+            <script src="/static/components/requirejs/require.js"></script>
+            <script>
+              requirejs.config({
+                paths: {
+                  base: '/static/base',
+                  plotly: 'https://cdn.plot.ly/plotly-latest.min.js?noext',
+                },
+              });
+            </script>
+            '''))
 
 ### just in case no plots displayed
 import plotly.offline as pyo
