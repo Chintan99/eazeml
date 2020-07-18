@@ -8,8 +8,11 @@ setuptools.setup(
     name="eazeml",
  
     #version of the module
-    version="0.1",
- 
+    version="0.0.7",
+
+    #license
+    license='LICENSE.txt',
+    
     #Name of Author
     author="Chintan Chitroda",
  
@@ -17,7 +20,7 @@ setuptools.setup(
     author_email="chintanchitroda47@gmail.com",
  
     #Small Description about module
-    description="EazeML makes Tasks of Machine Learning and Data Science super easy.",
+    description="EazeML makes Task of Machine Learning and Data Science super easy.",
  
     long_description=long_description,
  
@@ -25,8 +28,8 @@ setuptools.setup(
     long_description_content_type="text/markdown",
  
     #Any link to reach this module, if you have any webpage or github profile
-    url="https://github.com/Chintan99/eaze-ml",
-    packages=setuptools.find_packages(),
+    url="https://github.com/Chintan99/eazeml",
+    packages=['eazeml'],
  
     #classifiers like program is suitable for python3, just leave as it is.
     classifiers=[
@@ -40,15 +43,18 @@ setuptools.setup(
         'numpy',
         'seaborn',
         'matplotlib',
-        'statsmodels',
         'plotly',
-        'cufflinks',
         'sklearn',
-        'xgboost',
         'lightgbm',
         'textblob',
         'nltk',
         'tqdm',
         'flask',
+        'wordcloud',
+        'xgboost ',
+        'wordcloud',
+        'cufflinks',
+        'catboost',
+
     ],
 )
